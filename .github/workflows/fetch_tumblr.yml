@@ -1,4 +1,4 @@
-name: Reddit Search
+name: Fetch Tumblr Posts
 
 on:
   schedule:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch: # 手動トリガーも可能
 
 jobs:
-  reddit_search:
+  fetch_tumblr:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,25 +21,23 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install praw python-dotenv
+          pip install pytumblr python-dotenv
 
-      - name: Run reddit_search script
+      - name: Run fetch_tumblr script
         env:
-          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
-          REDDIT_SECRET: ${{ secrets.REDDIT_SECRET }}
-          REDDIT_USER_AGENT: ${{ secrets.REDDIT_USER_AGENT }}
+          TUMBLR_API_KEY: ${{ secrets.TUMBLR_API_KEY }}
         run: |
-          python app/reddit_search.py
+          python app/fetch_tumblr.py
 
-      - name: Upload Reddit data as artifact
+      - name: Upload Tumblr data as artifact
         uses: actions/upload-artifact@v2
         with:
-          name: reddit-data
-          path: data/reddit/*.json
+          name: tumblr-data
+          path: data/tumblr/*.json
 
       - name: Send notification to Discord
         if: success()
         run: |
           curl -H "Content-Type: application/json" \
-               -d '{"content": "Reddit data has been successfully fetched and uploaded as an artifact."}' \
+               -d '{"content": "Tumblr data has been successfully fetched and uploaded as an artifact."}' \
                ${{ secrets.DISCORD_WEBHOOK_URL }}
