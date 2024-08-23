@@ -1,0 +1,107 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "editor.rulers": [],
+    // "css.format.enable": true, // VS Code標準のコード整形機能を有効化
+    // "css.format.newlineBetweenRules": true, // CSSのルール間に改行を入れて区切る
+    // "css.format.newlineBetweenSelectors": true, // 複数セレクタを記述している場合、各セレクタを改行で区切る
+    // "css.format.maxPreserveNewLines": 10, // preserveNewLinesの改行数を10にする
+    // "css.format.preserveNewLines": true, // 要素の前にある改行を保持する
+    // "css.format.spaceAroundSelectorSeparator": false, // セレクタに使われている >、+、~、の記号の前にスペースを入れない
+    // "css.validate": false, // VS Code標準のCSS文法チェック機能を有効化
+    // "scss.validate": false, // VS Code標準のSCSS文法チェック機能を有効化
+    // "stylelint.validate": ["css", "scss"], // Stylelintの文法チェックを有効化
+    // "editor.codeActionsOnSave": {
+    //   "source.fixAll.stylelint": "explicit"
+    // },
+    "editor.bracketPairColorization.enabled": true, // ブラケット（開きかっこと閉じかっこ）のペアを判別しやすくするために色をつける
+    // "editor.formatOnSave": false, // ファイル保存時のフォーマッター機能を無効
+    "editor.guides.bracketPairs": "active", // ブラケットペア（開きかっこと閉じかっこ）にカーソルを置いているときにガイド線を表示する
+    "editor.insertSpaces": true, // Tabキーを押したときにスペースを入力する
+    "editor.tabSize": 2, // Tabキーを押したときのインデント幅を半角スペース2個にする
+    "editor.unicodeHighlight.ambiguousCharacters": true, // 全角スペースなど、ASCII文字（標準的な半角英数の文字）と間違えやすい文字を強調表示する
+    "editor.unicodeHighlight.includeComments": true, // コメント内の文字にUnicodeや全角スペースなどがあれば強調表示する
+    "editor.wordWrap": "off", // 行を折り返さない
+    "files.eol": "\n", // 行末文字をLFにする
+    "files.encoding": "utf8", // 文字エンコードをUTF-8にする
+    "files.trimTrailingWhitespace": true, // ファイル保存時に行末の空白を削除する
+    "files.insertFinalNewline": false, //ファイル保存時に最後の行に改行を入れる
+    // "html.format.enable": true, // VS Code標準のHTML整形機能を有効化
+    // "html.format.indentInnerHtml": true, // <head>と<body>タグにインデントを入れる
+    // "html.format.maxPreserveNewLines": 10, // preserveNewLinesで保持する改行の数
+    // "html.format.preserveNewLines": true, // 要素の前にある改行を保持する
+    // "html.format.wrapLineLength": 0, // 1行あたりの最大文字数、0 = 無効（改行しない）
+    // "html.format.wrapAttributes": "preserve", // 属性を改行しない
+    // "javascript.format.enable": true, // VS Code標準のJavaScript整形機能を有効化
+    // "javascript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": true, // 空のかっこの開きかっこと閉じかっこの中に空白のスペースを入れる
+    // "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true, // 空でないかっこの開きかっこと閉じかっこに空白のスペースを入れる
+    // "javascript.validate.enable": true, // VS Code標準のJavaScript文法チェック機能を有効化
+
+    // Python インタープリタのパス
+    "python.defaultInterpreterPath": "${workspaceFolder}/bin/python",
+
+    // Linterの設定
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.flake8Enabled": false, // Flake8を使う場合は true に変更
+    "python.linting.mypyEnabled": false, // Mypyを使う場合は true に変更
+    "python.linting.pylintArgs": [
+      "--disable=C0114", // モジュールの docstring チェックを無効化
+      "--disable=C0115", // クラスの docstring チェックを無効化
+      "--disable=C0116" // 関数の docstring チェックを無効化
+    ],
+
+    // フォーマッタの設定
+    "python.formatting.provider": "black", // Blackを使用
+    "editor.formatOnSave": true, // 保存時に自動フォーマット
+
+    // Lintとフォーマットのスクリプトを保存時に自動実行
+    "python.linting.lintOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit"
+    },
+
+    // Python 拡張機能のための分析
+    "python.analysis.autoSearchPaths": true,
+    "python.analysis.useLibraryCodeForTypes": true,
+    "python.analysis.diagnosticMode": "workspace",
+
+    // ターミナルの設定
+    "terminal.integrated.env.osx": {
+      "PYTHONPATH": "${workspaceFolder}"
+    },
+    "terminal.integrated.env.linux": {
+      "PYTHONPATH": "${workspaceFolder}"
+    },
+    "terminal.integrated.env.windows": {
+      "PYTHONPATH": "${workspaceFolder}"
+    },
+
+    // テストフレームワークの設定
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.nosetestsEnabled": false,
+
+    // VS Code 自体の設定
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/.DS_Store": true,
+      "**/*.pyc": true,
+      "**/*.pyo": true,
+      ".venv": true,
+      ".vscode": true
+    },
+    "search.exclude": {
+      "**/__pycache__": true,
+      "**/.DS_Store": true,
+      "**/*.pyc": true,
+      "**/*.pyo": true,
+      ".venv": true,
+      ".vscode": true
+    }
+  }
+}

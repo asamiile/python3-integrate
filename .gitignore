@@ -1,0 +1,31 @@
+# Python関連
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+*.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# 仮想環境
+bin/
+include/
+lib/
+
+# IDE関連
+.vscode/
+.idea/
+
+# OS関連
+.DS_Store
+Thumbs.db
+
+# テストキャッシュ
+.pytest_cache/
+
+# テストデータ
+data/
