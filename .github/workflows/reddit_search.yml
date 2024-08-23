@@ -1,0 +1,37 @@
+name: Fetch Reddit Data
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # 毎日0時に実行（UTC時間）
+
+jobs:
+  fetch_reddit_data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install praw python-dotenv
+
+      - name: Set environment variables
+        run: |
+          echo "REDDIT_CLIENT_ID=${{ secrets.REDDIT_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "REDDIT_CLIENT_SECRET=${{ secrets.REDDIT_CLIENT_SECRET }}" >> $GITHUB_ENV
+
+      - name: Run fetch_reddit.py
+        run: python app/fetch_reddit.py
+
+      - name: Upload data as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: reddit-data
+          path: data/
