@@ -1,11 +1,12 @@
-name: Fetch Reddit Data
+name: Reddit Search
 
 on:
   schedule:
-    - cron: "0 0 * * *" # 毎日0時に実行（UTC時間）
+    - cron: "0 0 * * *" # 毎日0時に実行
+  workflow_dispatch: # 手動トリガーも可能
 
 jobs:
-  fetch_reddit_data:
+  reddit_search:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,16 +23,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install praw python-dotenv
 
-      - name: Set environment variables
+      - name: Run reddit_search script
+        env:
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_SECRET: ${{ secrets.REDDIT_SECRET }}
+          REDDIT_USER_AGENT: ${{ secrets.REDDIT_USER_AGENT }}
         run: |
-          echo "REDDIT_CLIENT_ID=${{ secrets.REDDIT_CLIENT_ID }}" >> $GITHUB_ENV
-          echo "REDDIT_CLIENT_SECRET=${{ secrets.REDDIT_CLIENT_SECRET }}" >> $GITHUB_ENV
+          python app/reddit_search.py
 
-      - name: Run fetch_reddit.py
-        run: python app/fetch_reddit.py
-
-      - name: Upload data as artifact
+      - name: Upload Reddit data as artifact
         uses: actions/upload-artifact@v2
         with:
           name: reddit-data
-          path: data/
+          path: data/reddit/*.json
+
+      - name: Send notification to Discord
+        if: success()
+        run: |
+          curl -H "Content-Type: application/json" \
+               -d '{"content": "Reddit data has been successfully fetched and uploaded as an artifact."}' \
+               ${{ secrets.DISCORD_WEBHOOK_URL }}

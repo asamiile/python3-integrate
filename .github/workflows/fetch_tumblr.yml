@@ -34,3 +34,10 @@ jobs:
         with:
           name: tumblr-data
           path: data/tumblr/*.json
+
+      - name: Send notification to Discord
+        if: success()
+        run: |
+          curl -H "Content-Type: application/json" \
+               -d '{"content": "Tumblr data has been successfully fetched and uploaded as an artifact."}' \
+               ${{ secrets.DISCORD_WEBHOOK_URL }}
