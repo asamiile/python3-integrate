@@ -41,5 +41,12 @@ jobs:
         if: success()
         run: |
           curl -H "Content-Type: application/json" \
-               -d '{"content": "Reddit data has been successfully fetched and uploaded as an artifact."}' \
-               ${{ secrets.DISCORD_WEBHOOK_URL }}
+              -d '{"content": "Reddit data has been successfully fetched and uploaded as an artifact."}' \
+              ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+      - name: Send failure notification to Discord
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+              -d '{"content": "Failed to fetch Reddit data or upload artifact."}' \
+              ${{ secrets.DISCORD_WEBHOOK_URL }}
