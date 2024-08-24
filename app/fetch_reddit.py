@@ -54,6 +54,10 @@ def search_reddit(keywords):
                 post_data['comments'].append(comment_data)
             data.append(post_data)
 
+    if not data:
+        print("No data found, skipping save.")
+        return
+
     output_dir = Path('data/reddit')
     if not output_dir.exists():
         print(f"Creating directory: {output_dir}")
