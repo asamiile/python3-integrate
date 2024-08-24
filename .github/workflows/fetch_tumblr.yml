@@ -23,7 +23,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytumblr python-dotenv google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
 
-      - name: Run fetch_tumblr.py
+      - name: Run fetch_tumblr script
         env:
           TUMBLR_API_KEY: ${{ secrets.TUMBLR_API_KEY }}
           GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
@@ -35,12 +35,12 @@ jobs:
         if: success()
         run: |
           curl -H "Content-Type: application/json" \
-              -d '{"content": "Tumblr data has been successfully fetched and uploaded as an artifact."}' \
+              -d '{"content": "Tumblr data has been successfully fetched and uploaded as an Google Drive."}' \
               ${{ secrets.DISCORD_WEBHOOK_URL }}
 
       - name: Send failure notification to Discord
         if: failure()
         run: |
           curl -H "Content-Type: application/json" \
-              -d '{"content": "Failed to fetch Tumblr data or upload artifact."}' \
+              -d '{"content": "Failed to fetch Tumblr data or upload Google Drive."}' \
               ${{ secrets.DISCORD_WEBHOOK_URL }}
