@@ -1,4 +1,4 @@
-name: Fetch Tumblr Posts
+name: Fetch Reddit Data
 
 on:
   schedule:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch: # 手動トリガーも可能
 
 jobs:
-  fetch_tumblr:
+  fetch_reddit:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,30 +21,49 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytumblr python-dotenv
+          pip install praw python-dotenv
 
-      - name: Run fetch_tumblr script
+      - name: Run fetch_reddit script
         env:
-          TUMBLR_API_KEY: ${{ secrets.TUMBLR_API_KEY }}
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_SECRET: ${{ secrets.REDDIT_SECRET }}
+          REDDIT_USER_AGENT: ${{ secrets.REDDIT_USER_AGENT }}
         run: |
-          python app/fetch_tumblr.py
+          python app/fetch_reddit.py
 
-      - name: Upload Tumblr data as artifact
+      - name: Check if data exists
+        id: check_data
+        run: |
+          if [ -z "$(ls -A data/reddit/*.json 2>/dev/null)" ]; then
+            echo "data_exists=false" >> $GITHUB_ENV
+          else
+            echo "data_exists=true" >> $GITHUB_ENV
+          fi
+
+      - name: Upload Reddit data as artifact
+        if: env.data_exists == 'true'
         uses: actions/upload-artifact@v2
         with:
-          name: tumblr-data
-          path: data/tumblr/*.json
+          name: reddit-data
+          path: data/reddit/*.json
 
-      - name: Send notification to Discord
-        if: success()
+      - name: Send success notification to Discord
+        if: success() && env.data_exists == 'true'
         run: |
           curl -H "Content-Type: application/json" \
-              -d '{"content": "Tumblr data has been successfully fetched and uploaded as an artifact."}' \
+              -d '{"content": "Reddit data has been successfully fetched and uploaded as an artifact."}' \
+              ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+      - name: Send no data notification to Discord
+        if: success() && env.data_exists == 'false'
+        run: |
+          curl -H "Content-Type: application/json" \
+              -d '{"content": "No Reddit data was found to fetch."}' \
               ${{ secrets.DISCORD_WEBHOOK_URL }}
 
       - name: Send failure notification to Discord
         if: failure()
         run: |
           curl -H "Content-Type: application/json" \
-              -d '{"content": "Failed to fetch Tumblr data or upload artifact."}' \
+              -d '{"content": "Failed to fetch Reddit data or upload artifact."}' \
               ${{ secrets.DISCORD_WEBHOOK_URL }}
