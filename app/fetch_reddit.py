@@ -113,5 +113,5 @@ def search_reddit(keywords):
 
 # メインの処理
 if __name__ == '__main__':
-    keywords = ["福岡", "香椎浜", "Kashiihama", "かしいはま", "アイランドシティ", "照葉", "てりは"]
+    keywords = ["香椎浜", "Kashiihama", "かしいはま", "アイランドシティ", "照葉", "てりは"]
     search_reddit(keywords)
