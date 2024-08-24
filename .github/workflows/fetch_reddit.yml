@@ -23,13 +23,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install praw python-dotenv
 
-      - name: Run reddit_search script
+      - name: Run fetch_reddit script
         env:
           REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
           REDDIT_SECRET: ${{ secrets.REDDIT_SECRET }}
           REDDIT_USER_AGENT: ${{ secrets.REDDIT_USER_AGENT }}
         run: |
-          python app/reddit_search.py
+          python app/fetch_reddit.py
 
       - name: Upload Reddit data as artifact
         uses: actions/upload-artifact@v2
