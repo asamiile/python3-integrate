@@ -8,14 +8,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # 認証情報の設定
-BEARER_TOKEN = os.getenv("BEARER_TOKEN")
+X_BEARER_TOKEN = os.getenv("X_BEARER_TOKEN")
 
-if not BEARER_TOKEN:
-    print("Error: BEARER_TOKEN is not set in the .env file.")
+if not X_BEARER_TOKEN:
+    print("Error: X_BEARER_TOKEN is not set in the .env file.")
     exit(1)
 
-def create_headers(bearer_token):
-    headers = {"Authorization": f"Bearer {bearer_token}"}
+def create_headers(X_BEARER_TOKEN):
+    headers = {"Authorization": f"Bearer {X_BEARER_TOKEN}"}
     return headers
 
 def create_url(keyword, max_results=10):
@@ -39,7 +39,7 @@ def save_to_json(data, filename):
 
 def main():
     keyword = "香椎浜"  # 検索したいキーワード
-    headers = create_headers(BEARER_TOKEN)
+    headers = create_headers(X_BEARER_TOKEN)
     url, params = create_url(keyword)
     response_data = connect_to_endpoint(url, headers, params)
     save_to_json(response_data, "tweets.json")

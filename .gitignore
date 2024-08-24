@@ -29,3 +29,6 @@ Thumbs.db
 
 # テストデータ
 data/
+
+# その他ファイル
+service-account-file.json
