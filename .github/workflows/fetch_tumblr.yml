@@ -29,7 +29,7 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
           GOOGLE_DRIVE_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID }}
         run: |
-          python fetch_tumblr.py
+          python app/fetch_tumblr.py
 
       - name: Send notification to Discord
         if: success()
