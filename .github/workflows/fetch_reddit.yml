@@ -23,13 +23,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install praw python-dotenv
 
-      - name: Run reddit_search script
+      - name: Run fetch_reddit script
         env:
           REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
           REDDIT_SECRET: ${{ secrets.REDDIT_SECRET }}
           REDDIT_USER_AGENT: ${{ secrets.REDDIT_USER_AGENT }}
         run: |
-          python app/reddit_search.py
+          python app/fetch_reddit.py
 
       - name: Upload Reddit data as artifact
         uses: actions/upload-artifact@v2
@@ -41,5 +41,12 @@ jobs:
         if: success()
         run: |
           curl -H "Content-Type: application/json" \
-               -d '{"content": "Reddit data has been successfully fetched and uploaded as an artifact."}' \
-               ${{ secrets.DISCORD_WEBHOOK_URL }}
+              -d '{"content": "Reddit data has been successfully fetched and uploaded as an artifact."}' \
+              ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+      - name: Send failure notification to Discord
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+              -d '{"content": "Failed to fetch Reddit data or upload artifact."}' \
+              ${{ secrets.DISCORD_WEBHOOK_URL }}

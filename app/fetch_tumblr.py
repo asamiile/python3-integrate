@@ -53,6 +53,10 @@ def search_tumblr(keywords):
     return data
 
 def save_data_to_json(data, directory="data/tumblr"):
+    if not data:
+        print("No data found, skipping save.")
+        return
+
     if not os.path.exists(directory):
         os.makedirs(directory)
 
