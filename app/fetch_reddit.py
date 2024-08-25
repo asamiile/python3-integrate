@@ -25,10 +25,16 @@ if not google_drive_folder_id or not service_account_file:
     print("Error: Google Drive credentials are not set in the .env file.")
     exit(1)
 
-# 環境変数からGoogle認証情報のファイルパスを取得
-credentials_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+# GitHub Actionsで実行されている場合に環境変数からGoogle認証情報のファイルパスを取得
+if os.getenv('GITHUB_ACTIONS'):
+    # 環境変数からGoogle認証情報のファイルパスを取得
+    credentials_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 
-credentials = service_account.Credentials.from_service_account_file(credentials_path)
+    if not credentials_path:
+        print("Error: GOOGLE_APPLICATION_CREDENTIALS environment variable is not set.")
+        exit(1)
+
+    credentials = service_account.Credentials.from_service_account_file(credentials_path)
 
 # Google Drive APIクライアントを作成
 def create_drive_service():
