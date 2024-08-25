@@ -23,10 +23,16 @@ if not service_account_file or not folder_id:
     print("Error: Google Drive credentials or folder ID is not set in the .env file.")
     exit(1)
 
-# 環境変数からGoogle認証情報のファイルパスを取得
-credentials_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+# GitHub Actionsで実行されている場合に環境変数からGoogle認証情報のファイルパスを取得
+if os.getenv('GITHUB_ACTIONS'):
+    # 環境変数からGoogle認証情報のファイルパスを取得
+    credentials_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 
-credentials = service_account.Credentials.from_service_account_file(credentials_path)
+    if not credentials_path:
+        print("Error: GOOGLE_APPLICATION_CREDENTIALS environment variable is not set.")
+        exit(1)
+
+    credentials = service_account.Credentials.from_service_account_file(credentials_path)
 
 # Tumblr APIのクライアントを設定
 client = pytumblr.TumblrRestClient(api_key)
