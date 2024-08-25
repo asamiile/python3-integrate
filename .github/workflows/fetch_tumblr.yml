@@ -1,4 +1,4 @@
-name: Fetch Tumblr Data
+name: Tumblr Search
 
 on:
   schedule:
