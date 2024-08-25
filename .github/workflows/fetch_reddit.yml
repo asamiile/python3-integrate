@@ -23,6 +23,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install praw python-dotenv google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
 
+      - name: Create Google credentials file
+        run: |
+          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > $HOME/google-credentials.json
+
       - name: Run fetch_reddit script
         env:
           REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
