@@ -26,6 +26,8 @@ jobs:
       - name: Create Google credentials file
         run: |
           echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > $HOME/google-credentials.json
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: $HOME/google-credentials.json
 
       - name: Run fetch_reddit script
         env:
@@ -34,6 +36,7 @@ jobs:
           REDDIT_USER_AGENT: ${{ secrets.REDDIT_USER_AGENT }}
           GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
           GOOGLE_DRIVE_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID }}
+          GOOGLE_APPLICATION_CREDENTIALS: $HOME/google-credentials.json
         run: |
           python app/fetch_reddit.py
 
