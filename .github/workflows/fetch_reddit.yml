@@ -26,8 +26,17 @@ jobs:
       - name: Create Google credentials file
         run: |
           echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > $HOME/google-credentials.json
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: $HOME/google-credentials.json
+
+      - name: Verify Google credentials file
+        run: |
+          cat $HOME/google-credentials.json
+
+      - name: Set GOOGLE_APPLICATION_CREDENTIALS environment variable
+        run: echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/google-credentials.json" >> $GITHUB_ENV
+
+      - name: Print environment variables
+        run: |
+          echo $GOOGLE_APPLICATION_CREDENTIALS
 
       - name: Run fetch_reddit script
         env:
