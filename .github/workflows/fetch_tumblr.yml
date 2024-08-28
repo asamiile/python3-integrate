@@ -1,17 +1,14 @@
 name: Tumblr Search
-
 on:
   schedule:
     - cron: "0 0 * * *" # 毎日0時に実行
   workflow_dispatch: # 手動トリガーも可能
-
 jobs:
   fetch_tumblr:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -23,30 +20,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytumblr python-dotenv google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
 
-      - name: Store Google credentials
-        run: echo "$GOOGLE_APPLICATION_CREDENTIALS" > $HOME/google-credentials.json
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-
       - name: Run fetch_tumblr script
         env:
           TUMBLR_API_KEY: ${{ secrets.TUMBLR_API_KEY }}
-          GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           GOOGLE_DRIVE_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID }}
-          GOOGLE_APPLICATION_CREDENTIALS: $HOME/google-credentials.json
-        run: |
-          python app/fetch_tumblr.py
+        run: python app/fetch_tumblr.py
 
       - name: Send notification to Discord
         if: success()
         run: |
           curl -H "Content-Type: application/json" \
-              -d '{"content": "Tumblr data has been successfully fetched and uploaded as an Google Drive."}' \
+              -d '{"content": "Tumblr data has been successfully fetched and uploaded to Google Drive."}' \
               ${{ secrets.DISCORD_WEBHOOK_URL }}
 
       - name: Send failure notification to Discord
         if: failure()
         run: |
           curl -H "Content-Type: application/json" \
-              -d '{"content": "Failed to fetch Tumblr data or upload Google Drive."}' \
+              -d '{"content": "Failed to fetch Tumblr data or upload to Google Drive."}' \
               ${{ secrets.DISCORD_WEBHOOK_URL }}
