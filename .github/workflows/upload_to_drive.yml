@@ -2,6 +2,7 @@ name: Upload JSON to Google Drive
 on:
   schedule:
     - cron: "*/10 * * * *" # 10分ごとに実行
+
 jobs:
   upload:
     runs-on: ubuntu-latest
@@ -19,8 +20,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client python-dotenv
 
+      - name: Create JSON file
+        run: |
+          mkdir -p data/test
+          echo '{"key": "value"}' > data/test/test.json
+
       - name: Upload JSON to Google Drive
         run: python app/upload_to_drive.py
         env:
           GOOGLE_DRIVE_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID }}
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
+      - name: Clean up
+        run: rm -rf data/test
