@@ -66,7 +66,7 @@ def search_reddit(keywords):
     reddit = praw.Reddit(
         client_id=client_id,
         client_secret=client_secret,
-        user_agent='your_user_agent'
+        user_agent='fetch_reddit/v1.0 (by asamiile)'
     )
     start_time, end_time = get_yesterday_time_range()
     data = []
