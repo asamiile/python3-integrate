@@ -1,4 +1,5 @@
 import os
+import json
 from dotenv import load_dotenv
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -8,16 +9,16 @@ from googleapiclient.http import MediaFileUpload
 load_dotenv()
 
 def upload_to_drive(file_path, folder_id):
-    # 環境変数からサービスアカウントファイルのパスを取得
-    service_account_file = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+    # 環境変数からサービスアカウント情報を取得
+    service_account_info = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 
-    if not service_account_file:
+    if not service_account_info:
         raise ValueError("環境変数 'GOOGLE_APPLICATION_CREDENTIALS' が設定されていません。")
 
     # Google Drive APIのクライアントを作成
     SCOPES = ['https://www.googleapis.com/auth/drive.file']
-    credentials = service_account.Credentials.from_service_account_file(
-        service_account_file, scopes=SCOPES)
+    credentials = service_account.Credentials.from_service_account_info(
+        json.loads(service_account_info), scopes=SCOPES)
     drive_service = build('drive', 'v3', credentials=credentials)
 
     # ファイルをアップロード
