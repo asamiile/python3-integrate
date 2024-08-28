@@ -7,59 +7,38 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
-# .envファイルから環境変数を読み込む
-load_dotenv()
-
-# 環境変数の確認
-api_key = os.getenv("TUMBLR_API_KEY")
-service_account_file = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-folder_id = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
-
-if not api_key:
-    print("Error: Tumblr API key is not set in the .env file.")
-    exit(1)
-
-if not service_account_file or not folder_id:
-    print("Error: Google Drive credentials or folder ID is not set in the .env file.")
-    exit(1)
-
-# Tumblr APIのクライアントを設定
-client = pytumblr.TumblrRestClient(api_key)
-
-# Google Drive APIの設定
-SCOPES = ['https://www.googleapis.com/auth/drive.file']
-credentials = service_account.Credentials.from_service_account_file(
-    service_account_file, scopes=SCOPES)
-drive_service = build('drive', 'v3', credentials=credentials)
-
-def upload_to_drive(file_path, file_name, folder_id):
-    file_metadata = {
-        'name': file_name,
-        'parents': [folder_id]
+def load_env_variables():
+    load_dotenv()
+    env_vars = {
+        "api_key": os.getenv("TUMBLR_API_KEY"),
+        "service_account_file": os.getenv("GOOGLE_APPLICATION_CREDENTIALS"),
+        "folder_id": os.getenv("GOOGLE_DRIVE_FOLDER_ID")
     }
+    missing_vars = [key for key, value in env_vars.items() if not value]
+    if missing_vars:
+        raise ValueError(f"Missing environment variables: {', '.join(missing_vars)}")
+    return env_vars
+
+def create_drive_service(service_account_file):
+    SCOPES = ['https://www.googleapis.com/auth/drive.file']
+    credentials = service_account.Credentials.from_service_account_file(service_account_file, scopes=SCOPES)
+    return build('drive', 'v3', credentials=credentials)
+
+def upload_to_drive(service, file_path, folder_id):
+    file_metadata = {'name': os.path.basename(file_path), 'parents': [folder_id]}
     media = MediaFileUpload(file_path, mimetype='application/json')
-    file = drive_service.files().create(
-        body=file_metadata,
-        media_body=media,
-        fields='id'
-    ).execute()
-    print(f'File ID: {file.get("id")}')
+    file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+    print(f'File ID: {file.get("id")} uploaded to Google Drive.')
 
-def search_tumblr(keywords):
+def search_tumblr(client, keywords):
     data = []
-
-    # 前日の0時から23:59までのタイムスタンプを計算
     today = datetime.now()
-    yesterday = today - timedelta(days=1)
-    start_time = int(yesterday.replace(hour=0, minute=0, second=0, microsecond=0).timestamp())
-    end_time = int(yesterday.replace(hour=23, minute=59, second=59, microsecond=999999).timestamp())
+    start_time = int((today - timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0).timestamp())
+    end_time = int((today - timedelta(days=1)).replace(hour=23, minute=59, second=59, microsecond=999999).timestamp())
 
-    # キーワードに基づいてTumblrの投稿を検索
     for keyword in keywords:
         try:
             posts = client.tagged(keyword)
-            if not posts:
-                print(f"No posts found for keyword: {keyword}")
             for post in posts:
                 if start_time <= post.get('timestamp', 0) <= end_time:
                     data.append({
@@ -77,17 +56,13 @@ def search_tumblr(keywords):
                     })
         except Exception as e:
             print(f"Error fetching posts for keyword '{keyword}': {e}")
-
     return data
 
 def save_data_to_json(data, directory="/tmp"):
     if not data:
         print("No data found, skipping save.")
         return None
-
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
+    os.makedirs(directory, exist_ok=True)
     filename = os.path.join(directory, f"tumblr_{datetime.now().strftime('%Y%m%d')}.json")
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
@@ -95,9 +70,17 @@ def save_data_to_json(data, directory="/tmp"):
     return filename
 
 if __name__ == "__main__":
-    keywords = ["香椎浜", "Kashiihama", "かしいはま", "アイランドシティ", "照葉", "てりは"]
-    results = search_tumblr(keywords)
-    file_path = save_data_to_json(results)
-    if file_path:
-        upload_to_drive(file_path, os.path.basename(file_path), folder_id)
-        os.remove(file_path)
+    try:
+        env_vars = load_env_variables()
+        drive_service = create_drive_service(env_vars['service_account_file'])
+        client = pytumblr.TumblrRestClient(env_vars['api_key'])
+
+        keywords = ["香椎浜", "Kashiihama", "かしいはま", "アイランドシティ", "照葉", "てりは"]
+        results = search_tumblr(client, keywords)
+
+        file_path = save_data_to_json(results)
+        if file_path:
+            upload_to_drive(drive_service, file_path, env_vars['folder_id'])
+            os.remove(file_path)
+    except Exception as e:
+        print(f"An error occurred: {e}")
