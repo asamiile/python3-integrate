@@ -20,7 +20,7 @@ jobs:
           pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client python-dotenv
 
       - name: Store Google credentials
-        run: echo "$GOOGLE_APPLICATION_CREDENTIALS" > $HOME/google-credentials.json
+        run: echo "$GOOGLE_APPLICATION_CREDENTIALS" > $GITHUB_WORKSPACE/google-credentials.json
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
@@ -28,4 +28,4 @@ jobs:
         run: python app/upload_to_drive.py
         env:
           GOOGLE_DRIVE_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID }}
-          GOOGLE_APPLICATION_CREDENTIALS: $HOME/google-credentials.json
+          GOOGLE_APPLICATION_CREDENTIALS: $GITHUB_WORKSPACE/google-credentials.json
