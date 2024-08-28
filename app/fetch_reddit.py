@@ -52,8 +52,7 @@ def upload_to_drive(service, file_path, folder_id):
         print(f"File ID: {file.get('id')}")
     except Exception as e:
         print(f"An error occurred: {e}")
-        file = None
-    return file
+        raise
 
 # 前日の0時から23:59までのデータを取得するための時間範囲を計算
 def get_yesterday_time_range():
