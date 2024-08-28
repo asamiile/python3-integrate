@@ -83,6 +83,10 @@ def search_tumblr(client, keywords):
 
 # データをJSONファイルに保存
 def save_data_to_json(data, directory="data/tumblr"):
+    if not data:  # データが空の時は保存しない
+        print("No data found, skipping save.")
+        return None
+
     directory_path = Path(directory)
     directory_path.mkdir(parents=True, exist_ok=True)
 
@@ -98,7 +102,10 @@ if __name__ == "__main__":
     keywords = ["香椎浜", "Kashiihama", "かしいはま", "アイランドシティ", "照葉", "てりは"]
     results = search_tumblr(client, keywords)
     file_path = save_data_to_json(results)
-    if file_path:
+
+    if file_path:  # 保存成功時のみアップロード
         drive_service = create_drive_service()
         upload_to_drive(drive_service, file_path, google_drive_folder_id)
         os.remove(file_path)
+    else:
+        print("No data file created, nothing to upload.")

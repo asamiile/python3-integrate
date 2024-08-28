@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
+
 # .envファイルから環境変数を読み込む
 load_dotenv()
 
@@ -67,13 +68,8 @@ def search_reddit(keywords):
         client_secret=client_secret,
         user_agent='your_user_agent'
     )
-
+    start_time, end_time = get_yesterday_time_range()
     data = []
-
-    # 前日の0時〜23:59の範囲を計算
-    now = datetime.utcnow()
-    start_time = datetime(now.year, now.month, now.day) - timedelta(days=1)
-    end_time = start_time + timedelta(days=1)
 
     for keyword in keywords:
         subreddit = reddit.subreddit('all')
@@ -99,10 +95,13 @@ def search_reddit(keywords):
             data.append(post_data)
     if not data:
         print("No data found, skipping save.")
-        return
+    return data
 
 # データをJSONファイルに保存
 def save_data_to_json(data, directory="data/reddit"):
+    if not data:  # データがない時は保存しない
+        return None
+
     directory_path = Path(directory)
     directory_path.mkdir(parents=True, exist_ok=True)
 
@@ -117,7 +116,10 @@ if __name__ == '__main__':
     keywords = ["香椎浜", "Kashiihama", "かしいはま", "アイランドシティ", "照葉", "てりは"]
     results = search_reddit(keywords)
     file_path = save_data_to_json(results)
-    if file_path:
+
+    if file_path:  # 保存成功時のみアップロード
         drive_service = create_drive_service()
         upload_to_drive(drive_service, file_path, google_drive_folder_id)
         os.remove(file_path)
+    else:
+        print("No data file created, nothing to upload.")
