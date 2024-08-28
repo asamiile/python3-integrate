@@ -12,7 +12,7 @@ load_dotenv()
 
 # 環境変数の確認
 api_key = os.getenv("TUMBLR_API_KEY")
-service_account_file = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
+service_account_file = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 folder_id = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
 
 if not api_key:
@@ -22,17 +22,6 @@ if not api_key:
 if not service_account_file or not folder_id:
     print("Error: Google Drive credentials or folder ID is not set in the .env file.")
     exit(1)
-
-# GitHub Actionsで実行されている場合に環境変数からGoogle認証情報のファイルパスを取得
-if os.getenv('GITHUB_ACTIONS'):
-    # 環境変数からGoogle認証情報のファイルパスを取得
-    credentials_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
-
-    if not credentials_path:
-        print("Error: GOOGLE_APPLICATION_CREDENTIALS environment variable is not set.")
-        exit(1)
-
-    credentials = service_account.Credentials.from_service_account_file(credentials_path)
 
 # Tumblr APIのクライアントを設定
 client = pytumblr.TumblrRestClient(api_key)

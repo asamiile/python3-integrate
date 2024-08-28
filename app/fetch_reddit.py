@@ -15,7 +15,7 @@ load_dotenv()
 client_id = os.getenv('REDDIT_CLIENT_ID')
 client_secret = os.getenv('REDDIT_CLIENT_SECRET')
 google_drive_folder_id = os.getenv('GOOGLE_DRIVE_FOLDER_ID')
-service_account_file = os.getenv('GOOGLE_APPLICATION_CREDENTIALS_JSON')
+service_account_file = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 
 if not client_id or not client_secret:
     print("Error: Reddit API credentials are not set in the .env file.")
@@ -24,17 +24,6 @@ if not client_id or not client_secret:
 if not google_drive_folder_id or not service_account_file:
     print("Error: Google Drive credentials are not set in the .env file.")
     exit(1)
-
-# GitHub Actionsで実行されている場合に環境変数からGoogle認証情報のファイルパスを取得
-if os.getenv('GITHUB_ACTIONS'):
-    # 環境変数からGoogle認証情報のファイルパスを取得
-    credentials_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
-
-    if not credentials_path:
-        print("Error: GOOGLE_APPLICATION_CREDENTIALS environment variable is not set.")
-        exit(1)
-
-    credentials = service_account.Credentials.from_service_account_file(credentials_path)
 
 # Google Drive APIクライアントを作成
 def create_drive_service():
