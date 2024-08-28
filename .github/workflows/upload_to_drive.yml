@@ -30,7 +30,7 @@ jobs:
         run: echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/google-credentials.json" >> $GITHUB_ENV
 
       - name: Upload JSON to Google Drive
-        run: python upload_to_drive.py
+        run: python app/upload_to_drive.py
         env:
           GOOGLE_APPLICATION_CREDENTIALS: $HOME/google-credentials.json
           GOOGLE_DRIVE_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID }}
