@@ -31,12 +31,12 @@ jobs:
         if: success()
         run: |
           curl -H "Content-Type: application/json" \
-              -d '{"content": "Tumblr data has been successfully fetched and uploaded to Google Drive."}' \
+              -d '{"content": "fetch_tumblr.py ran successfully."}' \
               ${{ secrets.DISCORD_WEBHOOK_URL }}
 
       - name: Send failure notification to Discord
         if: failure()
         run: |
           curl -H "Content-Type: application/json" \
-              -d '{"content": "Failed to fetch Tumblr data or upload to Google Drive."}' \
+              -d '{"content": "fetch_tumblr.py ran failed."}' \
               ${{ secrets.DISCORD_WEBHOOK_URL }}
