@@ -56,9 +56,6 @@ params = {
 # APIリクエストを送信
 response = requests.get(API_URL, headers=headers, params=params)
 
-# tldrが無い場合、abstractを表示する
-# abstractをOpenAI APIで要約する
-
 # 結果の処理
 if response.status_code == 200:
     papers = response.json().get("data", [])
@@ -72,8 +69,8 @@ if response.status_code == 200:
         for paper in papers:
             title = paper.get('title')
             authors = ', '.join(author['name'] for author in paper.get('authors', []))
-            # abstract = paper.get('abstract', 'No abstract available.')
-            tldr = paper.get('tldr').get('text', 'No TL;DR available.') if paper.get('tldr') else 'No TL;DR available.'
+            abstract = paper.get('abstract', 'No abstract available.')
+            tldr = paper.get('tldr').get('text') if paper.get('tldr') else abstract
             venue = paper.get('venue', 'No venue available.')
             publication_date = paper.get('publicationDate')
             url = paper.get('url')
@@ -81,8 +78,7 @@ if response.status_code == 200:
             # Discordに投稿するメッセージを構築
             message += f"**Title:** {title}\n"
             message += f"**Authors:** {authors}\n"
-            # message += f"**Abstract:** {abstract}\n"
-            message += f"**Tldr:** {tldr}\n"
+            message += f"**Summary:** {tldr}\n"
             message += f"**Venue:** {venue}\n"
             message += f"**Publication Date:** {publication_date}\n"
             message += f"**URL:** {url}\n"
@@ -90,8 +86,7 @@ if response.status_code == 200:
 
             print(f"Title: {title}")
             print(f"Authors: {authors}")
-            # print(f"Abstract: {abstract}")
-            print(f"Tldr: {tldr}")
+            print(f"Summary: {tldr}")
             print(f"Venue: {venue}")
             print(f"Publication Date: {publication_date}")
             print(f"URL: {url}")
