@@ -1,0 +1,27 @@
+name: Semantic Scholar Search
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # 毎日0時に実行
+  workflow_dispatch: # 手動トリガーも可能
+
+jobs:
+  run-semantic-scholar-search:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run fetch_semantic_scholar.py
+        env:
+          SEMANTIC_SCHOLAR_API_KEY: ${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
+      run: python app/fetch_semantic_scholar.py

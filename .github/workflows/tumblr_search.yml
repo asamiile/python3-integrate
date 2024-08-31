@@ -1,8 +1,10 @@
 name: Tumblr Search
+
 on:
   schedule:
     - cron: "0 0 * * *" # 毎日0時に実行
   workflow_dispatch: # 手動トリガーも可能
+
 jobs:
   fetch_tumblr:
     runs-on: ubuntu-latest
