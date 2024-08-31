@@ -9,12 +9,13 @@ load_dotenv()
 
 # 環境変数からAPIキーを取得
 API_KEY = os.getenv("SEMANTIC_SCHOLAR_API_KEY")
+DISCORD_WEBHOOK_URL_SCHOLAR = os.getenv("DISCORD_WEBHOOK_URL_SCHOLAR")
 
 # Semantic Scholar APIのエンドポイント
 API_URL = "https://api.semanticscholar.org/graph/v1/paper/search"
 
 # 検索クエリの設定
-query = "Aesthetics"
+query = "art"
 
 # キーワードリスト
 # keywords = [
@@ -55,22 +56,60 @@ params = {
 # APIリクエストを送信
 response = requests.get(API_URL, headers=headers, params=params)
 
+# tldrが無い場合、abstractを表示する
+# abstractをOpenAI APIで要約する
+
 # 結果の処理
 if response.status_code == 200:
     papers = response.json().get("data", [])
 
     if not papers:
-        print("検索結果がありません")
-    else:
-        for paper in papers:
-            print(f"Title: {paper.get('title')}")
-            print(f"Authors: {', '.join(author['name'] for author in paper.get('authors', []))}")
-            print(f"Abstract: {paper.get('abstract')}")
-            print(f"Tldr: {paper.get('tldr')}")
-            print(f"Venue: {paper.get('venue')}")
-            print(f"Publication Date: {paper.get('publicationDate')}")
-            print(f"URL: {paper.get('url')}")
+        message = "No search results found."
+        print(message)
 
-            print("="*80)
+    else:
+        message = "Semantic Scholar Search Results:\n"
+        for paper in papers:
+            title = paper.get('title')
+            authors = ', '.join(author['name'] for author in paper.get('authors', []))
+            # abstract = paper.get('abstract', 'No abstract available.')
+            tldr = paper.get('tldr').get('text', 'No TL;DR available.') if paper.get('tldr') else 'No TL;DR available.'
+            venue = paper.get('venue', 'No venue available.')
+            publication_date = paper.get('publicationDate')
+            url = paper.get('url')
+
+            # Discordに投稿するメッセージを構築
+            message += f"**Title:** {title}\n"
+            message += f"**Authors:** {authors}\n"
+            # message += f"**Abstract:** {abstract}\n"
+            message += f"**Tldr:** {tldr}\n"
+            message += f"**Venue:** {venue}\n"
+            message += f"**Publication Date:** {publication_date}\n"
+            message += f"**URL:** {url}\n"
+            message += "="*75 + "\n"
+
+            print(f"Title: {title}")
+            print(f"Authors: {authors}")
+            # print(f"Abstract: {abstract}")
+            print(f"Tldr: {tldr}")
+            print(f"Venue: {venue}")
+            print(f"Publication Date: {publication_date}")
+            print(f"URL: {url}")
+            print("="*75)
+
+    # Discordにメッセージを送信
+    discord_data = {"content": message}
+    discord_response = requests.post(DISCORD_WEBHOOK_URL_SCHOLAR, json=discord_data)
+
+    if discord_response.status_code != 204:
+        print(f"Failed to send message to Discord: {discord_response.status_code} - {discord_response.text}")
+
 else:
-    print(f"Error: {response.status_code} - {response.text}")
+    error_message = f"Error: {response.status_code} - {response.text}"
+    print(error_message)
+
+    # エラーもDiscordに送信
+    discord_data = {"content": error_message}
+    discord_response = requests.post(DISCORD_WEBHOOK_URL_SCHOLAR, json=discord_data)
+    if discord_response.status_code != 204:
+        print(f"Failed to send error message to Discord: {discord_response.status_code} - {discord_response.text}")
