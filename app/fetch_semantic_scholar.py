@@ -16,6 +16,7 @@ API_URL = "https://api.semanticscholar.org/graph/v1/paper/search"
 
 # 検索クエリの設定
 query = "art"
+# query = "esthetics"
 
 # publicationDateOrYearパラメータに前日の日付を設定
 today = datetime.now()
@@ -46,9 +47,7 @@ if response.status_code == 200:
     papers = response.json().get("data", [])
 
     if not papers:
-        message = "No search results found."
-        print(message)
-
+        print("No search results found.")
     else:
         message = "Semantic Scholar Search Results:\n"
         for paper in papers:
@@ -80,12 +79,12 @@ if response.status_code == 200:
             print(f"URL: {url}")
             print("="*75)
 
-    # Discordにメッセージを送信
-    discord_data = {"content": message}
-    discord_response = requests.post(DISCORD_WEBHOOK_URL_SCHOLAR, json=discord_data)
+        # Discordにメッセージを送信
+        discord_data = {"content": message}
+        discord_response = requests.post(DISCORD_WEBHOOK_URL_SCHOLAR, json=discord_data)
 
-    if discord_response.status_code != 204:
-        print(f"Failed to send message to Discord: {discord_response.status_code} - {discord_response.text}")
+        if discord_response.status_code != 204:
+            print(f"Failed to send message to Discord: {discord_response.status_code} - {discord_response.text}")
 
 else:
     error_message = f"Error: {response.status_code} - {response.text}"
