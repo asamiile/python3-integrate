@@ -6,7 +6,7 @@ on:
   workflow_dispatch: # 手動トリガーも可能
 
 jobs:
-  run-semantic-scholar-search:
+  semantic_scholar_search:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
