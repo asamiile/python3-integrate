@@ -1,8 +1,10 @@
 name: Reddit Search
+
 on:
   schedule:
     - cron: "0 0 * * *" # 毎日0時に実行
   workflow_dispatch: # 手動トリガーも可能
+
 jobs:
   reddit_search:
     runs-on: ubuntu-latest
