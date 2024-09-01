@@ -26,4 +26,5 @@ jobs:
         env:
           SEMANTIC_SCHOLAR_API_KEY: ${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
           DISCORD_WEBHOOK_URL_SCHOLAR: ${{ secrets.DISCORD_WEBHOOK_URL_SCHOLAR }}
-      run: python app/fetch_semantic_scholar.py
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python app/fetch_semantic_scholar.py
