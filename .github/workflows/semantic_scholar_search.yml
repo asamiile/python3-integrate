@@ -28,3 +28,10 @@ jobs:
           DISCORD_WEBHOOK_URL_SCHOLAR: ${{ secrets.DISCORD_WEBHOOK_URL_SCHOLAR }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: python app/fetch_semantic_scholar.py
+
+      - name: Send failure notification to Discord
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+              -d '{"content": "fetch_semantic_scholar.py ran failed."}' \
+              ${{ secrets.DISCORD_WEBHOOK_URL_SCHOLAR }}
