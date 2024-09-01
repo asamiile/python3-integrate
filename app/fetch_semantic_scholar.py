@@ -17,20 +17,6 @@ API_URL = "https://api.semanticscholar.org/graph/v1/paper/search"
 # 検索クエリの設定
 query = "art"
 
-# キーワードリスト
-# keywords = [
-#     "art",
-#     "Aesthetics",
-    # "machine learning",
-    # "artificial intelligence",
-    # "deep learning",
-    # "AI-generated art",
-    # "Computer Vision"
-# ]
-
-# キーワードをORで結合してクエリを作成
-# query = " OR ".join(keywords)
-
 # publicationDateOrYearパラメータに前日の日付を設定
 today = datetime.now()
 one_day_ago = (today - timedelta(days=1)).strftime('%Y-%m-%d')
@@ -46,9 +32,8 @@ headers = {
 # パラメータの設定
 params = {
     "query": encoded_query,
-    "fields": "title,authors,abstract,tldr,venue,publicationDate,url",
-    "fieldsOfStudy": "Art",
-    # 'publicationTypes': 'JournalArticle',
+    "fields": "title,authors,tldr,abstract,fieldsOfStudy,venue,publicationDate,url",
+    "fieldsOfStudy": "Art,Computer Science,Geology,Psychology,Philosophy,Engineering,Education",
     "limit": 100,
     "publicationDateOrYear": one_day_ago,
 }
@@ -69,8 +54,9 @@ if response.status_code == 200:
         for paper in papers:
             title = paper.get('title')
             authors = ', '.join(author['name'] for author in paper.get('authors', []))
+            tldr = paper.get('tldr').get('text') if paper.get('tldr') else paper.get('abstract', 'No abstract available.')
             abstract = paper.get('abstract', 'No abstract available.')
-            tldr = paper.get('tldr').get('text') if paper.get('tldr') else abstract
+            fields_of_study = ', '.join(paper.get('fieldsOfStudy', [])) if paper.get('fieldsOfStudy') else 'No fields of study available'
             venue = paper.get('venue', 'No venue available.')
             publication_date = paper.get('publicationDate')
             url = paper.get('url')
@@ -79,6 +65,7 @@ if response.status_code == 200:
             message += f"**Title:** {title}\n"
             message += f"**Authors:** {authors}\n"
             message += f"**Summary:** {tldr}\n"
+            message += f"**Fields of Study:** {fields_of_study}\n"
             message += f"**Venue:** {venue}\n"
             message += f"**Publication Date:** {publication_date}\n"
             message += f"**URL:** {url}\n"
@@ -87,6 +74,7 @@ if response.status_code == 200:
             print(f"Title: {title}")
             print(f"Authors: {authors}")
             print(f"Summary: {tldr}")
+            print(f"Fields of Study: {fields_of_study}")
             print(f"Venue: {venue}")
             print(f"Publication Date: {publication_date}")
             print(f"URL: {url}")
