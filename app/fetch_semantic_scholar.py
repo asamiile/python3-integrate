@@ -21,8 +21,8 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 API_URL = "https://api.semanticscholar.org/graph/v1/paper/search"
 
 # 検索クエリの設定
-query = "art"
-# query = "esthetics"
+# query = "art"
+query = "esthetics"
 
 # publicationDateOrYearパラメータに前日の日付を設定
 today = datetime.now()
