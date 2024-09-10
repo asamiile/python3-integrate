@@ -21,8 +21,7 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 API_URL = "https://api.semanticscholar.org/graph/v1/paper/search"
 
 # 検索クエリの設定
-# query = "art"
-query = "esthetics"
+query = "fukuoka+traditional craft"
 
 # publicationDateOrYearパラメータに前日の日付を設定
 today = datetime.now()
@@ -40,7 +39,7 @@ headers = {
 params = {
     "query": encoded_query,
     "fields": "title,authors,tldr,abstract,fieldsOfStudy,venue,publicationDate,url",
-    "fieldsOfStudy": "Art,Computer Science,Geology,Psychology,Philosophy,Engineering,Education",
+    # "fieldsOfStudy": "Art,Computer Science,Geology,Psychology,Philosophy,Engineering,Education",
     "limit": 100,
     "publicationDateOrYear": one_day_ago,
 }
