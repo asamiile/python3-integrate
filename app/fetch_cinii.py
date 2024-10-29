@@ -62,7 +62,7 @@ if __name__ == "__main__":
                 print()  # 空行を挿入して見やすくする
 
                 message = (
-                    f"**CiNiiの検索結果**\n"
+                    f"CiNii Search Results: {result['keyword']}\n"
                     f"**Title:** {item['title']}\n"
                     f"**Link:** {item['link']['@id']}\n"
                     f"**Publication Date:** {item['prism:publicationDate']}\n"
