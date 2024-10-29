@@ -1,5 +1,4 @@
 name: Semantic Scholar Search
-
 on:
   schedule:
     - cron: "0 0 * * *" # 毎日0時に実行
@@ -29,9 +28,30 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: python app/fetch_semantic_scholar.py
 
+      - name: Run fetch_semantic_scholar_fukuoka.py
+        env:
+          SEMANTIC_SCHOLAR_API_KEY: ${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
+          DISCORD_WEBHOOK_URL_SCHOLAR: ${{ secrets.DISCORD_WEBHOOK_URL_SCHOLAR }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python app/fetch_semantic_scholar_fukuoka.py
+
+      - name: Run fetch_semantic_scholar_aesthetics.py
+        env:
+          SEMANTIC_SCHOLAR_API_KEY: ${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
+          DISCORD_WEBHOOK_URL_SCHOLAR: ${{ secrets.DISCORD_WEBHOOK_URL_SCHOLAR }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python app/fetch_semantic_scholar_aesthetics.py
+
+      - name: Send success notification to Discord
+        if: success()
+        run: |
+          curl -H "Content-Type: application/json" \
+              -d '{"content": "Semantic Scholar scripts ran successfully."}' \
+              ${{ secrets.DISCORD_WEBHOOK_URL_SCHOLAR }}
+
       - name: Send failure notification to Discord
         if: failure()
         run: |
           curl -H "Content-Type: application/json" \
-              -d '{"content": "fetch_semantic_scholar.py ran failed."}' \
+              -d '{"content": "One or more Semantic Scholar scripts failed."}' \
               ${{ secrets.DISCORD_WEBHOOK_URL_SCHOLAR }}
