@@ -92,6 +92,6 @@ def fetch_and_notify(query):
         send_discord_notification(message)
 
 if __name__ == "__main__":
-    queries = ["aesthetics", "esthetics"]
+    queries = ["aesthetics", "esthetics", "astronomy", "astrophysics"]
     for query in queries:
         fetch_and_notify(query)
