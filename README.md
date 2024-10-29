@@ -33,6 +33,8 @@ python app/file_name.py
 ```
 ├── app
 |  └── Python Script File.
+├── colab
+|  └── Google Colab File.
 └── data
 ```
 
