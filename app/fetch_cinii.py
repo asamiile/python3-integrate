@@ -42,6 +42,8 @@ def send_discord_notification(message):
     else:
         print("Discord Webhook URL is not set.")
 
+# Ciniiは出版年月日が年のみ、月のみの場合があるので、
+# 最新n件を取得する
 if __name__ == "__main__":
     if not API_KEY:
         print("Error: CINII_API_KEY is not set in the .env file.")
