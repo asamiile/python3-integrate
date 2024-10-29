@@ -3,6 +3,7 @@ on:
   schedule:
     - cron: "0 0 * * *" # 毎日0時に実行
   workflow_dispatch: # 手動トリガーも可能
+
 jobs:
   semantic_scholar_search:
     runs-on: ubuntu-latest
@@ -33,6 +34,13 @@ jobs:
           DISCORD_WEBHOOK_URL_SCHOLAR: ${{ secrets.DISCORD_WEBHOOK_URL_SCHOLAR }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: python app/fetch_semantic_scholar_fukuoka.py
+
+      - name: Run fetch_semantic_scholar_aesthetics.py
+        env:
+          SEMANTIC_SCHOLAR_API_KEY: ${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
+          DISCORD_WEBHOOK_URL_SCHOLAR: ${{ secrets.DISCORD_WEBHOOK_URL_SCHOLAR }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python app/fetch_semantic_scholar_aesthetics.py
 
       - name: Send success notification to Discord
         if: success()
