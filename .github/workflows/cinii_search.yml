@@ -26,3 +26,10 @@ jobs:
         env:
           CINII_API_KEY: ${{ secrets.CINII_API_KEY }}
           DISCORD_WEBHOOK_URL_SCHOLAR: ${{ secrets.DISCORD_WEBHOOK_URL_SCHOLAR }}
+
+      - name: Send failure notification to Discord
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+              -d '{"content": "Cinii scripts failed."}' \
+              ${{ secrets.DISCORD_WEBHOOK_URL_SCHOLAR }}
