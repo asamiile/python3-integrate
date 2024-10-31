@@ -1,7 +1,7 @@
 name: Fetch CiNii Research
 on:
   schedule:
-    - cron: "0 2 * * 1" # 毎週月曜11時に実行 (UTC時間で2時)
+    - cron: "0 0 * * 1" # 毎週月曜0時に実行 (UTC)
   workflow_dispatch: # 手動トリガーも可能
 
 jobs:
