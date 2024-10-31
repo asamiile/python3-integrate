@@ -1,0 +1,37 @@
+name: OpenAI Ask Astronomy
+on:
+  schedule:
+    - cron: "0 0 * * *" # 毎日0時に実行 (UTC)
+  workflow_dispatch: # 手動トリガーも可能
+
+jobs:
+  openai_ask_astronomy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests python-dotenv openai
+
+      - name: Run openai_ask_astronomy.py
+        env:
+          DISCORD_WEBHOOK_URL_AIASSITANT: ${{ secrets.DISCORD_WEBHOOK_URL_AIASSITANT }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          LATITUDE: ${{ secrets.LATITUDE }}
+          LONGTITUDE: ${{ secrets.LONGTITUDE }}
+        run: python app/openai_ask_astronomy.py
+
+      - name: Send failure notification to Discord
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+              -d '{"content": "OpenAI Ask Astronomy script failed."}' \
+              ${{ secrets.DISCORD_WEBHOOK_URL_AIASSITANT }}
