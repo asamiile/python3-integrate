@@ -24,15 +24,16 @@ You are a knowledgeable assistant in astronomy and weather forecasting. You have
 
 # 質問を設定
 question = f"""
-本日、緯度: {LATITUDE}, 経度: {LONGTITUDE}の地点で夜空を撮影するのに適しているか知りたいです。以下の点について教えてください:
+本日、緯度: {LATITUDE}, 経度: {LONGTITUDE}の地点で夜空を撮影するのに適しているか知りたいです。以下の点について詳細に教えてください:
 1. 天気情報:
-    - 対象地点の天気
-    - 夜空の明るさ
-    - 夜の雲量
+    - 対象地点の天気（晴れ、曇り、雨など）
+    - 夜の雲量（少ない、中程度、多いなど）
 2. 天体情報:
-    - 月のフェーズ
-    - 月明かりの有無
-3. 夜空撮影に適した条件を満たしているかどうか
+    - 月のフェーズ（新月、満月など）
+    - 月明かりの有無（有り、無し）
+    - 星座の観測可能性（観測しやすい星座など）
+3. 夜空撮影に適しているか
+    - 天気、雲量、月明かり、星座の観測可能性を総合的に判断して、夜空撮影に適しているかどうかを評価してください。
 """
 
 def ask_openai(question):
@@ -59,5 +60,5 @@ def send_discord_notification(message):
 
 if __name__ == "__main__":
     answer = ask_openai(question)
-    print(f"本日の天体情報: {answer}")
-    send_discord_notification(f"本日の天体情報: {answer}")
+    print(f"本日の天体情報: \n{answer}")
+    send_discord_notification(f"本日の天体情報: \n{answer}")
