@@ -1,11 +1,11 @@
-name: Semantic Scholar Search
+name: OpenAI Ask Astronomy
 on:
   schedule:
-    - cron: "0 0 * * *" # 毎日0時に実行
+    - cron: "0 0 * * *" # 毎日0時に実行 (UTC)
   workflow_dispatch: # 手動トリガーも可能
 
 jobs:
-  semantic_scholar_search:
+  openai_ask_astronomy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -21,16 +21,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests python-dotenv openai
 
-      - name: Run fetch_semantic_scholar.py
+      - name: Run openai_ask_astronomy.py
         env:
-          SEMANTIC_SCHOLAR_API_KEY: ${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
-          DISCORD_WEBHOOK_URL_SCHOLAR: ${{ secrets.DISCORD_WEBHOOK_URL_SCHOLAR }}
+          DISCORD_WEBHOOK_URL_AIASSITANT: ${{ secrets.DISCORD_WEBHOOK_URL_AIASSITANT }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: python app/fetch_semantic_scholar.py
+          LATITUDE: ${{ secrets.LATITUDE }}
+          LONGTITUDE: ${{ secrets.LONGTITUDE }}
+        run: python app/openai_ask_astronomy.py
 
       - name: Send failure notification to Discord
         if: failure()
         run: |
           curl -H "Content-Type: application/json" \
-              -d '{"content": "Semantic Scholar scripts failed."}' \
-              ${{ secrets.DISCORD_WEBHOOK_URL_SCHOLAR }}
+              -d '{"content": "OpenAI Ask Astronomy script failed."}' \
+              ${{ secrets.DISCORD_WEBHOOK_URL_AIASSITANT }}
