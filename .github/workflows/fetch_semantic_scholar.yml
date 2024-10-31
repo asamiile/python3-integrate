@@ -1,11 +1,11 @@
-name: CiNii Research Search
+name: Fetch Semantic Scholar
 on:
   schedule:
-    - cron: "0 2 * * 1" # 毎週月曜11時に実行 (UTC時間で2時)
+    - cron: "0 0 * * *" # 毎日0時に実行
   workflow_dispatch: # 手動トリガーも可能
 
 jobs:
-  cinii_research_search:
+  semantic_scholar_search:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -19,17 +19,18 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install requests python-dotenv openai
 
-      - name: Run fetch_cinii.py
-        run: python fetch_cinii.py
+      - name: Run fetch_semantic_scholar.py
         env:
-          CINII_API_KEY: ${{ secrets.CINII_API_KEY }}
+          SEMANTIC_SCHOLAR_API_KEY: ${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
           DISCORD_WEBHOOK_URL_SCHOLAR: ${{ secrets.DISCORD_WEBHOOK_URL_SCHOLAR }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python app/fetch_semantic_scholar.py
 
       - name: Send failure notification to Discord
         if: failure()
         run: |
           curl -H "Content-Type: application/json" \
-              -d '{"content": "Cinii scripts failed."}' \
+              -d '{"content": "Semantic Scholar scripts failed."}' \
               ${{ secrets.DISCORD_WEBHOOK_URL_SCHOLAR }}
