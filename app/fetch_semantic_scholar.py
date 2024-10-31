@@ -53,7 +53,7 @@ def fetch_and_notify(query):
     # OpenAI APIを使ってテキストを要約する
     def summarize_text(text):
         try:
-            response = client.chat.completions.create(model="gpt-4",
+            response = client.chat.completions.create(model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant that summarizes texts and keeps the summary concise, ideally within 300 characters."},
                 {"role": "user", "content": f"Summarize the following text:\n\n{text}"}
