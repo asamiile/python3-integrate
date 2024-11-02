@@ -73,25 +73,47 @@ def fetch_and_notify(query):
             response = requests.post(DISCORD_WEBHOOK_URL_SCHOLAR, json=data)
             if response.status_code != 204:
                 print(f"Failed to send notification: {response.status_code}")
+                print(f"Response content: {response.content.decode('utf-8')}")
         else:
             print("Discord Webhook URL is not set.")
 
-    # 結果を処理してDiscordに送信
+    # メッセージを分割して送信
+    def send_long_message(messages):
+        max_length = 2000
+        current_message = ""
+        for message in messages:
+            if len(current_message) + len(message) + 2 > max_length:  # +2 for the "\n\n" separator
+                send_discord_notification(current_message)
+                current_message = message
+            else:
+                if current_message:
+                    current_message += "\n\n" + message
+                else:
+                    current_message = message
+        if current_message:
+            send_discord_notification(current_message)
+
+    # 結果を処理して1つのメッセージにまとめる
+    messages = []
     for paper in data.get('data', []):
         title = paper.get('title', 'No title')
         abstract = paper.get('abstract', 'No abstract')
         summary = summarize_text(abstract)
         message = (
-            f"Semantic Scholar Search Results: {query}\n"
             f"**Title:** {title}\n"
             f"**Summary:** {summary}\n"
             f"**Link:** {paper.get('url', 'No URL')}\n"
             f"**Publication Date:** {paper.get('publicationDate', 'No date')}\n"
             f"**Venue:** {paper.get('venue', 'No venue')}\n"
         )
-        send_discord_notification(message)
+        messages.append(message)
+
+    # まとめたメッセージを送信
+    if messages:
+        header = f"Semantic Scholar Search Results for {query}:\n"
+        send_long_message([header] + messages)
 
 if __name__ == "__main__":
-    queries = ["aesthetics", "esthetics", "astronomy", "astrophysics"]
+    queries = ["aesthetics", "esthetics", "astronomy", "astrophysics", "environmentology", "philosophy", "poetics"]
     for query in queries:
         fetch_and_notify(query)
