@@ -18,7 +18,6 @@ def fetch_cinii_data(api_key, keywords):
         params = {
             'appid': api_key,
             'format': 'json',
-            # 'count': 5,
             'q': keyword,
         }
         response = requests.get(base_url, params=params)
@@ -39,8 +38,14 @@ def send_discord_notification(message):
         response = requests.post(DISCORD_WEBHOOK_URL_SCHOLAR, json=data)
         if response.status_code != 204:
             print(f"Failed to send notification: {response.status_code}")
+            print(f"Response content: {response.content.decode('utf-8')}")
     else:
         print("Discord Webhook URL is not set.")
+
+def send_long_message(message):
+    max_length = 2000
+    for i in range(0, len(message), max_length):
+        send_discord_notification(message[i:i + max_length])
 
 # Ciniiは出版年月日が年のみ、月のみの場合があるので、
 # 最新n件を取得する
@@ -53,7 +58,8 @@ if __name__ == "__main__":
         results = fetch_cinii_data(API_KEY, KEYWORDS)
         for result in results:
             print(f"CiNii Search Results: {result['keyword']}")
-            for i in range(3):
+            messages = []
+            for i in range(min(3, len(result['data']['items']))):
                 item = result['data']['items'][i]
                 print(f"Title: {item['title']}")
                 print(f"Link: {item['link']['@id']}")
@@ -62,13 +68,16 @@ if __name__ == "__main__":
                 print()  # 空行を挿入して見やすくする
 
                 message = (
-                    f"CiNii Search Results: {result['keyword']}\n"
                     f"**Title:** {item['title']}\n"
                     f"**Link:** {item['link']['@id']}\n"
                     f"**Publication Date:** {item['prism:publicationDate']}\n"
                     f"**Publisher:** {item['dc:publisher']}\n"
                 )
-                send_discord_notification(message)
+                messages.append(message)
+
+            if messages:
+                full_message = f"CiNii Search Results for {result['keyword']}:\n\n" + "\n\n".join(messages)
+                send_long_message(full_message)
 
         # 成功通知を送信
         # send_discord_notification("fetch_cinii.py ran successfully.")
