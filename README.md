@@ -31,9 +31,12 @@ python app/file_name.py
 ## Directory
 
 ```
+├── .github/workflows
+|  └── GitHub Actions Files.
 ├── app
-|  └── Python Script File.
+|  └── Python Script Files.
 └── data
+|  └── Folder for retrieved data.
 ```
 
 
