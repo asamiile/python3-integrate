@@ -4,15 +4,14 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from datetime import datetime
 import base64
+from fetch_astronomy import get_moon_data  # fetch_astronomy.pyから関数をインポート
+from fetch_open_weather import get_weather_data  # fetch_open_weather.pyから関数をインポート
 
 # .envファイルを読み込む
 load_dotenv()
 
 # 環境変数からAPIキーを取得
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
-ASTRONOMY_APPLICATION_ID = os.getenv("ASTRONOMY_APPLICATION_ID")
-ASTRONOMY_APPLICATION_SEACRET = os.getenv("ASTRONOMY_APPLICATION_SEACRET")
 DISCORD_WEBHOOK_URL_ART = os.getenv("DISCORD_WEBHOOK_URL_ART")
 
 # OpenAI APIキーを設定
@@ -26,34 +25,6 @@ LONGTITUDE = os.getenv("LONGTITUDE")
 system_message = """
 You are a knowledgeable assistant in astronomy and weather forecasting. You have access to the latest weather data and astronomical information.
 """
-
-# OpenWeather APIを利用して天気情報を取得
-def get_weather_data(lat, lon, api_key):
-    url = f"http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric"
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print(f"Failed to fetch weather data: {response.status_code}")
-        print(f"Response content: {response.content.decode('utf-8')}")
-        return None
-
-# AstronomyAPIを利用して月のフェーズを取得
-def get_moon_data(lat, lon, app_id, app_secret):
-    today = datetime.now().strftime("%Y-%m-%d")
-    url = f"https://api.astronomyapi.com/api/v2/bodies/positions?latitude={lat}&longitude={lon}&elevation=0&from_date={today}&to_date={today}&time=00:00:00"
-    userpass = f"{app_id}:{app_secret}"
-    authString = base64.b64encode(userpass.encode()).decode()
-    headers = {
-        "Authorization": f"Basic {authString}"
-    }
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print(f"Failed to fetch moon data: {response.status_code}")
-        print(f"Response content: {response.content.decode('utf-8')}")
-        return None
 
 # OpenAI APIを利用して質問を送信し、回答を取得
 def ask_openai(question):
@@ -84,9 +55,9 @@ def send_discord_notification(message):
 
 if __name__ == "__main__":
     # 天気情報を取得
-    weather_data = get_weather_data(LATITUDE, LONGTITUDE, OPENWEATHER_API_KEY)
+    weather_data = get_weather_data(LATITUDE, LONGTITUDE)
     # 月のデータを取得
-    moon_data = get_moon_data(LATITUDE, LONGTITUDE, ASTRONOMY_APPLICATION_ID, ASTRONOMY_APPLICATION_SEACRET)
+    moon_data = get_moon_data(LATITUDE, LONGTITUDE)
 
     # 天気情報と月のデータが取得できた場合
     if weather_data and moon_data:
@@ -96,10 +67,7 @@ if __name__ == "__main__":
         wind_speed = weather_data['wind']['speed']
         cloudiness = weather_data['clouds']['all']
 
-        # moon_dataの内容を出力して確認
-        # print(moon_data)
-
-        # 月のフェーズを取得
+        # 正しいキーを使用して月のフェーズを取得
         moon_phase = moon_data['data']['table']['rows'][1]['cells'][0]['extraInfo']['phase']['string']
         moonlight = "有り" if moon_phase not in ["New Moon", "Waning Crescent"] else "無し"
 
@@ -126,4 +94,5 @@ if __name__ == "__main__":
         # Discordに通知を送信
         send_discord_notification(message)
     else:
+        # 天気情報または月のデータを取得できなかった場合のエラーメッセージ
         print("天気情報または月のデータを取得できませんでした。")
