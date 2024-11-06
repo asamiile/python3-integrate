@@ -75,7 +75,7 @@ if __name__ == "__main__":
         question = f"""
         本日、緯度: {LATITUDE}, 経度: {LONGTITUDE}の地点で夜空を撮影するのに適しているか知りたいです。以下の点について教えてください:
         1. 天気情報:
-            - 対象地点の天気: {weather_description}
+            - 天気: {weather_description}
             - 気温: {temperature}°C
             - 湿度: {humidity}%
             - 風速: {wind_speed} m/s
