@@ -27,3 +27,26 @@ def get_moon_data(lat, lon):
         print(f"Failed to fetch moon data: {response.status_code}")
         print(f"Response content: {response.content.decode('utf-8')}")
         return None
+
+# AstronomyAPIを利用して観測できる星座の情報を取得
+def get_visible_constellations(lat, lon):
+    today = datetime.now().strftime("%Y-%m-%d")
+    url = f"https://api.astronomyapi.com/api/v2/bodies/positions?latitude={lat}&longitude={lon}&elevation=0&from_date={today}&to_date={today}&time=00:00:00"
+    userpass = f"{ASTRONOMY_APPLICATION_ID}:{ASTRONOMY_APPLICATION_SEACRET}"
+    authString = base64.b64encode(userpass.encode()).decode()
+    headers = {
+        "Authorization": f"Basic {authString}"
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        constellations = []
+        for row in data['data']['table']['rows']:
+            for cell in row['cells']:
+                if 'constellation' in cell['position']:
+                    constellations.append(cell['position']['constellation']['name'])
+        return constellations
+    else:
+        print(f"Failed to fetch constellations data: {response.status_code}")
+        print(f"Response content: {response.content.decode('utf-8')}")
+        return None
