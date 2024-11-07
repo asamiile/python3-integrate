@@ -23,10 +23,13 @@ jobs:
 
       - name: Run openai_ask_astronomy.py
         env:
-          DISCORD_WEBHOOK_URL_AIASSITANT: ${{ secrets.DISCORD_WEBHOOK_URL_AIASSITANT }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          DISCORD_WEBHOOK_URL_ART: ${{ secrets.DISCORD_WEBHOOK_URL_ART }}
           LATITUDE: ${{ secrets.LATITUDE }}
           LONGTITUDE: ${{ secrets.LONGTITUDE }}
+          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+          ASTRONOMY_APPLICATION_ID: ${{ secrets.ASTRONOMY_APPLICATION_ID }}
+          ASTRONOMY_APPLICATION_SEACRET: ${{ secrets.ASTRONOMY_APPLICATION_SEACRET }}
         run: python app/openai_ask_astronomy.py
 
       - name: Send failure notification to Discord
@@ -34,4 +37,4 @@ jobs:
         run: |
           curl -H "Content-Type: application/json" \
               -d '{"content": "OpenAI Ask Astronomy script failed."}' \
-              ${{ secrets.DISCORD_WEBHOOK_URL_AIASSITANT }}
+              ${{ secrets.DISCORD_WEBHOOK_URL_ART }}
