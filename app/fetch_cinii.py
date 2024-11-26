@@ -8,7 +8,7 @@ load_dotenv()
 # 環境変数からAPIキーを取得
 API_KEY = os.getenv("CINII_API_KEY")
 DISCORD_WEBHOOK_URL_SCHOLAR = os.getenv("DISCORD_WEBHOOK_URL_SCHOLAR")
-KEYWORDS = ['美学', '哲学', '詩学', '環境', '伝統行事', '博多どんたく', '伝統空間', 'コミュニティ', '人と文化', 'オンラインゲーム', 'ギルド']
+KEYWORDS = ['美学', '哲学', '詩学', '環境']
 
 def fetch_cinii_data(api_key, keywords):
     results = []
