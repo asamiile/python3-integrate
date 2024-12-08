@@ -37,7 +37,7 @@ def fetch_and_notify(query):
     params = {
         "query": encoded_query,
         "fields": "title,authors,tldr,abstract,fieldsOfStudy,venue,publicationDate,url",
-        # "fieldsOfStudy": "Art,Computer Science",
+        # "fieldsOfStudy": "Art,Computer Science,Geology,Psychology,Philosophy,Engineering,Education",
         "limit": 100,
         "publicationDateOrYear": one_day_ago,
     }
