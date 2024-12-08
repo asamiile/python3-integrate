@@ -37,7 +37,7 @@ def fetch_and_notify(query):
     params = {
         "query": encoded_query,
         "fields": "title,authors,tldr,abstract,fieldsOfStudy,venue,publicationDate,url",
-        "fieldsOfStudy": "Art,Computer Science,Geology,Psychology,Philosophy,Engineering,Education",
+        # "fieldsOfStudy": "Art,Computer Science,Geology,Psychology,Philosophy,Engineering,Education",
         "limit": 100,
         "publicationDateOrYear": one_day_ago,
     }
@@ -114,6 +114,6 @@ def fetch_and_notify(query):
         send_long_message([header] + messages)
 
 if __name__ == "__main__":
-    queries = ["aesthetics", "esthetics", "astronomy", "astrophysics", "environmentology", "philosophy", "poetics"]
+    queries = ["Large Language Model", "Machine Learning", "Generative Art"]
     for query in queries:
         fetch_and_notify(query)
